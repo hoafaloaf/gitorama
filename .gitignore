@@ -1,0 +1,8 @@
+*.pyc
+.*.sw?
+*_ui.py
+*_rc.py
+.project
+.pydevproject
+.svn/
+build/

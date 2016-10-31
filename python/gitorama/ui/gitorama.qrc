@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>folder_black.png</file>
+  </qresource>
+</RCC>

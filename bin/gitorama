@@ -1,0 +1,22 @@
+#!/usr/bin/env python
+"""Main launcher for the Gitorama Git commit viewing interface."""
+
+import sys
+
+from PyQt4 import QtGui
+
+from gitorama import get_window
+
+
+def launch_gitorama(repository=None):
+    """Launch the Gitorama interface."""
+    app = QtGui.QApplication(sys.argv)
+
+    ww = get_window(repository)
+    ww.show()
+
+    sys.exit(app.exec_())
+
+
+if __name__ == "__main__":
+    sys.exit(launch_gitorama(sys.argv[1:]))
