@@ -1,8 +1,9 @@
 """Worker class for all git-related queries."""
 
-import os
+from gitorama import discover_repository
+from gitorama.nodes import RepositoryNode
 
-__all__ = ("Gitorama")
+__all__ = ("Gitorama",)
 
 ###############################################################################
 # CLASS: Gitorama
@@ -19,8 +20,16 @@ class Gitorama(object):
 
     def _initialise(self):
         """Initialise basic properties and attributes on the instance."""
-        self._repo = None
         self._root = None
+
+    @property
+    def repository(self):
+        """Return the current repository."""
+        return self.root.repository
+
+    @repository.setter
+    def repository(self, val):
+        self.set_repository(val)
 
     @property
     def root(self):
@@ -33,25 +42,18 @@ class Gitorama(object):
 
         This will zero out all existing data.
         """
-        if not repo:
-            return
+        repo = discover_repository(repo)
+        self._root = None
+        if repo:
+            self._root = RepositoryNode(repo)
 
-        if not (isinstance(repo, basestring) and os.path.isdir(repo)):
-            print "WARNING: Supplied repository isn't actually one: %s" % repo
-            return
+        return self._root
 
-        bits = os.path.split(repo)
-        if bits[1] == ".git" and os.path.isdir(bits[1]):
-            self._repo = bits[0]
-            return None
 
-        if ".git" not in os.listdir(repo):
-            print "WARNING: Supplied repository isn't actually one: %s" % repo
-            return None
+###############################################################################
+# INTERNAL METHODS
 
-        self._repo = repo
-        return repo
 
-    def query_repository(self):
-        """Query the current Git repository."""
-        pass
+def _get_commit_count_cmd():
+    """Return command used to count commits in a repository."""
+    return "git rev-list --all --count"
