@@ -98,7 +98,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="pathLineEdit">
+       <widget class="PathLineEdit" name="repositoryLineEdit">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -191,6 +191,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PathLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>gitorama.gui.path_lineedit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="gitorama.qrc"/>
  </resources>

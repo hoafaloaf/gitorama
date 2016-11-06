@@ -19,14 +19,14 @@ function build_qt {
 function build_ui {
     for ui_file in `find ${project_root} -name "*.ui"`; do
         py_file=${ui_file/\.ui/_ui.py}
-        build_qt "pyuic4" ${ui_file} ${py_file}
+        build_qt "pyside-uic" ${ui_file} ${py_file}
     done
 }
 
 function build_res {
     for qrc_file in `find ${project_root} -name "*.qrc"`; do
         py_file=${qrc_file/\.qrc/_rc.py}
-        build_qt "pyrcc4" ${qrc_file} ${py_file}
+        build_qt "pyside-rcc" ${qrc_file} ${py_file}
     done
 }
 

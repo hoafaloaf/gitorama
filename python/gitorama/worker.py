@@ -25,7 +25,9 @@ class Gitorama(object):
     @property
     def repository(self):
         """Return the current repository."""
-        return self.root.repository
+        if self.root:
+            return self.root.repository
+        return None
 
     @repository.setter
     def repository(self, val):
@@ -43,11 +45,12 @@ class Gitorama(object):
         This will zero out all existing data.
         """
         repo = discover_repository(repo)
+
         self._root = None
         if repo:
             self._root = RepositoryNode(repo)
 
-        return self._root
+        return repo
 
 
 ###############################################################################

@@ -52,9 +52,10 @@ class RepositoryNode(BaseNode):
 
     _TYPE = "repository"
 
-    def __init__(self, parent=None):
+    def __init__(self, repo=None, parent=None):
         """Initialise the instance."""
         super(RepositoryNode, self).__init__(parent=parent)
+        self.repository = repo
 
     @property
     def repository(self):

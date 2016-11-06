@@ -1,6 +1,10 @@
 """Interfaces for the Gitorama commit viewer."""
 
-from PyQt4 import QtCore, QtGui
+# from functools import partial
+
+import os
+
+from PySide import QtCore, QtGui
 
 from gitorama.gui.ui import gitorama_ui
 from gitorama.worker import Gitorama
@@ -38,6 +42,8 @@ class GitoramaWidget(QtGui.QWidget, gitorama_ui.Ui_gitorama):
         self.browserButton.setIconSize(QtCore.QSize(24, 24))
         self.browserButton.clicked.connect(self.launch_file_browser)
 
+        self.repositoryLineEdit.editingFinished.connect(self.set_repository)
+
         self.progress_bar = QtGui.QProgressBar()
         self.progress_bar.setMinimum(0)
         self.progress_bar.setMaximum(100)
@@ -53,22 +59,33 @@ class GitoramaWidget(QtGui.QWidget, gitorama_ui.Ui_gitorama):
         """Launch file browser for git repository selection."""
         current_path = "."
         if self.gg.repository:
-            current_path = self.gg.repository.path
+            current_path = os.path.dirname(
+                os.path.normpath(self.gg.repository.path))
 
         dialog = QtGui.QFileDialog(self, directory=current_path)
         dialog.setFileMode(dialog.DirectoryOnly)
-        repo_path = dialog.getExistingDirectory(self, "Select Directory")
+        repo_path = str(dialog.getExistingDirectory(self, "Select Directory"))
 
-        repo_path = str(repo_path or "")
-        if repo_path != current_path:
-            return self.set_repository(repo_path)
+        return self.set_repository(repo_path or current_path)
 
-        return None
-
-    def set_repository(self, repo):
+    def set_repository(self, file_path=None):
         """Set the interface's repository."""
-        self.gg.repository = str(repo)
-        return self.gg.repository
+        if file_path is None:
+            file_path = str(self.repositoryLineEdit.text())
+
+        file_path = str(file_path)
+        if not os.path.isdir(file_path):
+            file_path = os.path.dirname(file_path)
+
+        repo = self.gg.set_repository(file_path)
+        if repo:
+            file_path = os.path.dirname(os.path.normpath(repo.path))
+
+        self.repositoryLineEdit.blockSignals(True)
+        self.repositoryLineEdit.setText(file_path)
+        self.repositoryLineEdit.blockSignals(False)
+
+        return repo
 
 
 ###############################################################################
@@ -87,7 +104,6 @@ class GitoramaWindow(QtGui.QMainWindow):
         self.gitoramaWidget = GitoramaWidget(repository)
 
         layout = QtGui.QVBoxLayout(self.centralWidget)
-        layout.setMargin(4)
         layout.setSpacing(4)
         layout.addWidget(self.gitoramaWidget)
         self.setCentralWidget(self.centralWidget)
